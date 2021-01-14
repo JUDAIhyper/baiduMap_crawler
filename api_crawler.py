@@ -11,7 +11,7 @@ import threading
 # page_size=20     是每页显示的个数
 # ak=你的百度地图api授权码
 queries = ["客栈", "酒店", "旅馆", "民宿", "宾馆"]
-cities = []
+cities = ["北京","上海","广州"]
 ak = ""
 base_url = 'http://api.map.baidu.com/place/v2/search?query={}&region={}&output=json&output=json&ak={}&page_num={}&page_size=50&scope=2'
 #连接mongo
@@ -48,17 +48,18 @@ def getData(url):
 def run(city,query):
     for i in range(0, 10):  # 循环请求
         url = getUrl(query, city, i)
-        res = threading.Thread(target=getData, args=(url,)) #加入多线程
-        res.setDaemon(True)
-        res.start()
+        t = threading.Thread(target=getData, args=(url,)) #加入了多线程
+        t.setDaemon(True)
+        t.start()
         if not getData(url):
             break
         #print("========================",res,"========================")
         sleep(1)  # 防止被阻止访问，sleep一下
-        res.join()
+        t.join()
 
 
 if __name__ == "__main__":
+    #页数i
     for city in cities:
         for query in queries:
             run(city,query)
