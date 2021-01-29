@@ -3,15 +3,16 @@ import json
 import pymongo
 from time import sleep
 import threading
+from pathos.multiprocessing import ProcessingPool as Pool
 
 #参数
-# query=药店    是你想查询的内容
-# region=郑州   是你想查询的城市
-# page_num={}   是页码, 意思是第几页
-# page_size=20     是每页显示的个数
+# query=药店    想查询的内容
+# region=北京   想查询的城市
+# page_num={}   页码, 意思是第几页
+# page_size=20     每页显示的个数
 # ak=你的百度地图api授权码
 queries = ["客栈", "酒店", "旅馆", "民宿", "宾馆"]
-cities = ["北京","上海","广州"]
+cities = ["深圳","长沙","武汉"]
 ak = ""
 base_url = 'http://api.map.baidu.com/place/v2/search?query={}&region={}&output=json&output=json&ak={}&page_num={}&page_size=50&scope=2'
 #连接mongo
@@ -59,8 +60,11 @@ def run(city,query):
 
 
 if __name__ == "__main__":
-    #页数i
-    for city in cities:
-        for query in queries:
-            run(city,query)
+    # for city in cities:
+    #     for query in queries:
+    #         run(city,query)
+    pool=Pool()
+    pool.map(run,cities,queries)
+    pool.close()
+    pool.join()
     client.close()
